@@ -11,6 +11,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 
+@Entity
+@Table(name = "co_company")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Company implements Serializable {
     private static final long serialVersionUID = 594829320797158219L;
     //ID
