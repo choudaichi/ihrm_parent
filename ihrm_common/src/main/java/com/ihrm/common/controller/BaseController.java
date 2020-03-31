@@ -20,6 +20,8 @@ public class BaseController {
 
     protected String companyName;
 
+    protected String userId;
+
     protected Claims claims;
 
     //加上@ModelAttribute在进入Controller之前执行
@@ -51,6 +53,7 @@ public class BaseController {
             ProfileResult result = (ProfileResult) principals.getPrimaryPrincipal();
             this.companyId = result.getCompanyId();
             this.companyName = result.getCompany();
+            this.userId = result.getUserId();
         }
 
     }
