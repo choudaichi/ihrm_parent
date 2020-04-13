@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -93,6 +94,18 @@ public class User implements Serializable {
     private String departmentName;
 
     private String level;
+
+    public User() {
+    }
+
+    public User(Object[] values) {
+        this.username = values[1].toString();
+        this.mobile = values[2].toString();
+        this.workNumber = new DecimalFormat("#").format(values[3]);
+        this.formOfEmployment = ((Double) values[4]).intValue();
+        this.timeOfEntry = (Date) values[5];
+        this.departmentId = values[6].toString();
+    }
 
 
     @ManyToMany

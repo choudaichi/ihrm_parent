@@ -60,5 +60,10 @@ public class DepartmentController extends BaseController {
         return new Result(ResultCode.SUCCESS);
     }
 
+    @RequestMapping(value = "/department/search", method = RequestMethod.POST)
+    public Department findByCode(@RequestParam("code") String code, @RequestParam("companyId") String companyId) {
+        return departmentService.findByCode(code, companyId);
+    }
+
 
 }

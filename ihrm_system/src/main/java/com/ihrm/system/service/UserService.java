@@ -1,8 +1,10 @@
 package com.ihrm.system.service;
 
 import com.ihrm.common.utils.IdWorker;
+import com.ihrm.domain.company.Department;
 import com.ihrm.domain.system.Role;
 import com.ihrm.domain.system.User;
+import com.ihrm.system.client.DepartmentFeignClient;
 import com.ihrm.system.dao.RoleDao;
 import com.ihrm.system.dao.UserDao;
 import org.apache.shiro.crypto.hash.Md5Hash;
@@ -11,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -30,6 +33,9 @@ public class UserService {
 
     @Autowired
     private RoleDao roleDao;
+
+    @Autowired
+    private DepartmentFeignClient departmentFeignClient;
 
 
     public void save(User user) {
@@ -105,5 +111,26 @@ public class UserService {
     public User findByMobile(String mobile) {
         User user = userDao.findByMobile(mobile);
         return user;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void saveAll(List<User> list, String companyId, String companyName) {
+        for (User user : list) {
+            user.setPassword(new Md5Hash("123456", user.getMobile(), 3).toString());
+            user.setId(String.valueOf(idWorker.nextId()));
+            user.setCompanyId(companyId);
+            user.setCompanyName(companyName);
+            user.setInServiceStatus(1);
+            user.setEnableState(1);
+            user.setLevel("user");
+
+            Department department = departmentFeignClient.findByCode(user.getDepartmentId(), companyId);
+            if (department != null) {
+                user.setDepartmentId(department.getId());
+                user.setDepartmentName(department.getName());
+            }
+
+            userDao.save(user);
+        }
     }
 }
